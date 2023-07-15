@@ -8,32 +8,33 @@ int main(void)
 {
 	char *buffer;
 	char *path;
-	int count, i;
+	int count, i, wstatus;
 	size_t size;
 	pid_t pid;
 
-	buffer = NULL;
-	size = 0;
-	printf("$ ");
-	count = getline(&buffer, &size, stdin);
-	path = malloc(count);
-	if (path != NULL)
+	while(1)
 	{
-	char *const av[] = {path, NULL};
-	}
-	for (i = 0; i < count - 1; i++)
-	{
-		*(path + i) = *(buffer + i);
-	}
-	*(path + i) = '\0';
-	pid = fork();
-	if (pid == 0)
-	{
-		execve(av[0], av, NULL);
-	}
-	else if (pid == -1)
-	{
-		printf("Error occured\n");
+		buffer = NULL;
+		size = 0;
+		printf("$ ");
+		count = getline(&buffer, &size, stdin);
+		path = malloc(count);
+		for (i = 0; i < count - 1; i++)
+		{
+			*(path + i) = *(buffer + i);
+		}
+		*(path + i) = '\0';
+		pid = fork();
+		if (pid == 0)
+		{
+			char *const av[] = {path, NULL};
+			execve(path, av, NULL);
+		}
+		else if (pid == -1)
+		{
+			printf("Error occured\n");
+		}
+		wait(&wstatus);
 	}
 
 	return (0);
